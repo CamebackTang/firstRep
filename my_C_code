@@ -1,0 +1,493 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<windows.h>
+// 21点游戏（BlackJack）
+void p1(int a[][13],int amount[],int player1[],int p[]);
+void b1(int a[][13],int amount[],int banker0[],int surplus[],int b[]);
+void p2(int a[][13],int amount[],int player1[],int surplus[],int p[]);
+void b2(int a[][13],int amount[],int banker0[],int surplus[],int b[]);
+void go_on1(int a[][13],int amount[],int player1[],int surplus[],int p[]);
+ int go_on2(int a[][13],int amount[],int banker0[],int surplus[],int b[],int sum_b);
+
+int main()
+{
+	
+	
+	
+	srand(time(0));
+	int win_p[1]={0},win_b[1]={0};
+	int value[14]={1,2,3,4,5,6,7,8,9,10,10,10,10,11};
+	printf("\t电脑先做庄家,然后轮流做庄\n"); 
+	int round=1;
+	int s=1;//你先做闲家 
+	do
+	{
+		if(s==1)//1,-1//你是闲家 
+		{
+			int i,j;
+			int amount[1]={52};//剩余牌数 
+			int a[4][13];//牌堆
+			int surplus[13];//记牌器
+			for(i=0;i<4;i++) {for(j=0;j<13;j++) a[i][j]=1;}//0,1表示牌的存在性 	
+			for(i=0;i<13;i++) surplus[i]=4;//剩余各种牌的数量 
+	
+			while(amount[0]>=12)
+			{
+				int p[1]={0};//闲家当前拿到的牌 
+				int b[1]={0};//庄家当前拿到的牌
+				int player1[6]={0};//闲家持牌 
+				int banker0[6]={0};//庄家持牌 
+				printf("\n");
+				printf("\n");
+				printf("\t       你是闲家\n");
+				printf("\n\t闲家\t\t庄家\n");
+				p1(a,amount,player1,p);//闲家暗牌
+				b1(a,amount,banker0,surplus,b);//庄家暗牌
+				p2(a,amount,player1,surplus,p);//2
+				b2(a,amount,banker0,surplus,b);//2
+	
+				int BJ_p(int player1[],int win_p[],int banker0[]);
+				int BJ_b(int banker0[],int win_b[]);
+				int u=BJ_p(player1,win_p,banker0);
+				int v=BJ_b(banker0,win_b);
+				if(u==1||v==1) continue;
+	
+				go_on1(a,amount,player1,surplus,p);//player1要牌到停止要牌
+				void pA(int p[],int player1[]);
+				pA(p,player1);//A=1,10,11
+				int sum_p=0;
+				for(i=0;i<p[0];i++) sum_p=sum_p+value[player1[i]];//
+	
+				int sum01(int banker0[],int sum_b);
+				int sum23(int banker0[],int b[],int sum_b);
+				int sum_b=0;
+				sum_b=sum01(banker0,sum_b);// 
+				sum_b=go_on2(a,amount,banker0,surplus,b,sum_b);//
+				
+				void over(int banker0[]);
+				over(banker0);//暗牌揭晓
+				 
+				if(p[0]==5&&sum_p<=21) printf("\t  五小龙,you:win\twin_p=%d\n",++win_p[0]);
+				else
+				{
+					void compare(int sum_p,int sum_b,int win_p[],int win_b[]);
+					printf("\tsum=%d\t\tsum=%d\n",sum_p,sum_b);
+					compare(sum_p,sum_b,win_p,win_b);
+				}
+				printf("    p=%d,b=%d,sum_p=%d,sum_b=%d\n",p[0],b[0],sum_p,sum_b);
+				printf("\t\tamount=%d\n",amount[0]);
+				for(i=0;i<6;i++)printf("h%d ",player1[i]);
+				printf("\n");
+				for(i=0;i<6;i++)printf("h%d ",banker0[i]);
+				printf("\n"); 
+				s=(-1)*s; 
+				system("pause");
+			}
+		} 
+		else//你是庄家 
+		{
+			int i,j;
+			int amount[1]={52};//剩余牌数 
+			int a[4][13];//牌堆
+			int surplus[13];//记牌器
+			for(i=0;i<4;i++) {for(j=0;j<13;j++) a[i][j]=1;}//0,1表示牌的存在性 	
+			for(i=0;i<13;i++) surplus[i]=4;//剩余各种牌的数量 
+	
+			while(amount[0]>=12)
+			{
+				int p[1]={0};//闲家当前拿到的牌 
+				int b[1]={0};//庄家当前拿到的牌
+				int player1[6]={0};//闲家持牌 
+				int banker0[6]={0};//庄家持牌
+				printf("\n");
+				printf("\n");
+				printf("\t       你是庄家\n"); 
+				printf("\n\t庄家\t\t闲家\n");
+				b1(a,amount,banker0,surplus,b);//庄家暗牌
+				p1(a,amount,player1,p);//闲家暗牌
+				b2(a,amount,banker0,surplus,b);//2
+				p2(a,amount,player1,surplus,p);//2
+				
+				int BJ_p(int player1[],int win_p[],int banker0[]);
+				int BJ_b(int banker0[],int win_b[]);
+				int u=BJ_p(player1,win_p,banker0);
+				int v=BJ_b(banker0,win_b);
+				if(u==1||v==1) continue;
+				
+				int sum01(int banker0[],int sum_b);
+				int sum23(int banker0[],int b[],int sum_b);
+				int sum_b=0;
+				sum_b=sum01(banker0,sum_b);// 
+				sum_b=go_on2(a,amount,banker0,surplus,b,sum_b);//
+				printf("\t       对方停牌\n");
+				
+				go_on1(a,amount,player1,surplus,p);//player1要牌到停止要牌
+				void pA(int p[],int player1[]);
+				pA(p,player1);//A=1,10,11
+				int sum_p=0;
+				for(i=0;i<p[0];i++) sum_p=sum_p+value[player1[i]];//
+				
+				void over(int banker0[]);
+				over(banker0);//暗牌揭晓 
+	
+				if(p[0]==5&&sum_p<=21) printf("\t  五小龙,you:win\twin_p=%d\n",++win_p[0]);
+				else
+				{
+					void compare(int sum_p,int sum_b,int win_p[],int win_b[]);
+					printf("\tsum=%d\t\tsum=%d\n",sum_p,sum_b);
+					compare(sum_p,sum_b,win_p,win_b);
+				}
+				printf("    p=%d,b=%d,sum_p=%d,sum_b=%d\n",p[0],b[0],sum_p,sum_b);
+				printf("\t\tamount=%d\n",amount[0]);
+				for(i=0;i<6;i++)printf("h%d ",player1[i]);
+				printf("\n");
+				for(i=0;i<6;i++)printf("h%d ",banker0[i]);
+				printf("\n"); 
+				s=(-1)*s; 
+				system("pause");
+			} 
+		}		
+/*此时s==(-1)*s*/
+		if(s==1)
+		{
+			printf("  请输入1或0，代表是否再继续一轮游戏\n");
+			scanf("%d",&round);
+		}
+	}while(round); 
+	printf("\t  win_p=%d\twin_b=%d\n",win_p[0],win_b[0]);
+	printf("\t    win_p - win_b= %d\n",win_p[0]-win_b[0]);
+	return 0;
+}
+
+ 
+void f(char f)//A,J,Q,K牌的显示
+{
+	printf("     ╭----╮\n");
+	printf("     │%c---│\n",f);
+	printf("     │----│\n");
+	printf("     │----│\n");
+	printf("     │---%c│\n",f);
+	printf("     ╰----╯\n");
+}
+void f(int f)//2~10牌的显示 
+{
+	printf("     ╭----╮\n");
+	printf("     │%-2d--│\n",f);
+	printf("     │----│\n");
+	printf("     │----│\n");
+	printf("     │--%2d│\n",f);
+	printf("     ╰----╯\n");
+}
+void f1(char f)
+{
+	printf("\t\t     ╭----╮\n");
+	printf("\t\t     │%c---│\n",f);
+	printf("\t\t     │----│\n");
+	printf("\t\t     │----│\n");
+	printf("\t\t     │---%c│\n",f);
+	printf("\t\t     ╰----╯\n"); 
+}
+void f1(int f)
+{
+	printf("\t\t     ╭----╮\n");
+	printf("\t\t     │%-2d--│\n",f);
+	printf("\t\t     │----│\n");
+	printf("\t\t     │----│\n");
+	printf("\t\t     │--%2d│\n",f);
+	printf("\t\t     ╰----╯\n"); 
+}
+void back()
+{
+	printf("     ╭----╮\n");
+	printf("     │-背-│\n");
+	printf("     │----│\n");
+	printf("     │----│\n");
+	printf("     │-面-│\n");
+	printf("     ╰----╯\n"); 
+}
+void tab_back()
+{
+	printf("\t\t     ╭----╮\n");
+	printf("\t\t     │-背-│\n");
+	printf("\t\t     │----│\n");
+	printf("\t\t     │----│\n");
+	printf("\t\t     │-面-│\n");
+	printf("\t\t     ╰----╯\n"); 
+}
+void c(char c)
+{
+	printf("\t\t     ╭----╮\n");
+	printf("\t\t     │%c---│\n",c);
+	printf("\t\t     │-正-│\n");
+	printf("\t\t     │-面-│\n");
+	printf("\t\t     │---%c│\n",c);
+	printf("\t\t     ╰----╯\n");
+}
+void c(int c)//2~10暗牌的显示 
+{
+	printf("\t\t     ╭----╮\n");
+	printf("\t\t     │%-2d--│\n",c);
+	printf("\t\t     │-正-│\n");
+	printf("\t\t     │-面-│\n");
+	printf("\t\t     │--%2d│\n",c);
+	printf("\t\t     ╰----╯\n");
+}
+ 
+
+/*闲家暗牌函数*/void p1(int a[][13],int amount[],int player1[],int p[])
+{
+	void f(char f),f(int f);
+	int x,y;
+	do
+	{	
+		x=rand()%4+0;
+		y=rand()%13+0;	
+	}while(a[x][y]==0);//准备发牌
+	if(y==0) f('A'); 
+	else if(y==10) f('J');
+	else if(y==11) f('Q');
+	else if(y==12) f('K');
+	else f(y+1);//发牌
+	a[x][y]=0,amount[0]--,player1[p[0]]=y;p[0]++;
+}
+/*庄家暗牌函数*/void b1(int a[][13],int amount[],int banker0[],int surplus[],int b[]) 
+{	
+	void tab_back(); 
+	int x,y;
+	do
+	{	
+		x=rand()%4+0;
+		y=rand()%13+0;	
+	}while(a[x][y]==0);//准备发牌 
+	tab_back();
+	a[x][y]=0,amount[0]--,banker0[b[0]]=y,surplus[y]--;b[0]++;
+}
+/*庄家暗牌揭明*/void over(int banker0[])
+{
+	void c(char c);
+	void c(int c);
+	if(banker0[0]==0) c('A');
+	else if(banker0[0]==10) c('J');
+	else if(banker0[0]==11) c('Q');
+	else if(banker0[0]==12) c('K');
+	else c(banker0[0]+1); 
+}
+
+
+/*闲家明牌函数*/void p2(int a[][13],int amount[],int player1[],int surplus[],int p[])
+{
+	void f(char f),f(int f);
+	int x,y;
+	do
+	{	
+		x=rand()%4+0;
+		y=rand()%13+0;	
+	}while(a[x][y]==0);//准备发牌
+	if(y==0) f('A'); 
+	else if(y==10) f('J');
+	else if(y==11) f('Q');
+	else if(y==12) f('K');
+	else f(y+1);//发牌
+	a[x][y]=0,amount[0]--,player1[p[0]]=y,surplus[y]--;p[0]++;
+} 
+/*庄家明牌函数*/void b2(int a[][13],int amount[],int banker0[],int surplus[],int b[])
+{
+	void f1(char f),f1(int f);
+	int x,y;
+	do
+	{	
+		x=rand()%4+0;
+		y=rand()%13+0;	
+	}while(a[x][y]==0);//准备发牌
+	if(y==0) f1('A'); 
+	else if(y==10) f1('J');
+	else if(y==11) f1('Q');
+	else if(y==12) f1('K');
+	else f1(y+1);//发牌
+	a[x][y]=0,amount[0]--,banker0[b[0]]=y,surplus[y]--;b[0]++;
+}
+
+
+void go_on1(int a[][13],int amount[],int player1[],int surplus[],int p[]) 
+{
+	void p2(int a[][13],int amount[],int player1[],int surplus[],int p[]);
+	int g;
+	while(p[0]<=6)
+	{
+		printf("\n  请输入1或0代表是否继续要牌:"); 
+		scanf("%d",&g);
+		if(g==1)
+		{
+			p2(a,amount,player1,surplus,p);
+			go_on1(a,amount,player1,surplus,p);
+		}
+		else break;
+	}
+}
+int go_on2(int a[][13],int amount[],int banker0[],int surplus[],int b[],int sum_b) 
+{
+	void b2(int a[][13],int amount[],int banker0[],int surplus[],int b[]);
+	int sum23(int banker0[],int b[],int sum_b);
+	int value[13]={1,2,3,4,5,6,7,8,9,10,10,10,10};
+	/*printf("\n请输入1或0代表是否继续要牌:");*/
+	float maybe=0,pro=0;
+	int j;
+	if(sum_b<16) 
+	{
+		b2(a,amount,banker0,surplus,b);
+		sum_b=sum23(banker0,b,sum_b);
+		sum_b=go_on2(a,amount,banker0,surplus,b,sum_b);
+	}
+	else if(sum_b>=16&&sum_b<=21) 
+	{
+		for(j=0;j<13;j++)
+		{if(sum_b+value[j]>=16&&sum_b+value[j]<=21) maybe=maybe+surplus[j];}
+		pro=maybe/amount[0];//probability
+		int x;
+		x=rand()%100+1;
+		if(x<pro*100)
+		{
+			b2(a,amount,banker0,surplus,b);
+			sum_b=sum23(banker0,b,sum_b);
+			sum_b=go_on2(a,amount,banker0,surplus,b,sum_b);
+		}
+	}
+	return(sum_b);
+}
+
+
+int sum01(int banker0[],int sum_b)//算b0和b1 
+{
+	int value[13]={1,2,3,4,5,6,7,8,9,10,10,10,10};//注意0
+	int sum[3]={0};
+	if(banker0[0]==0)
+	{
+		sum[0]=1+value[banker0[1]];
+		sum[1]=10+value[banker0[1]];
+		sum_b=sum[2]=11+value[banker0[1]];			
+	}
+	else if(banker0[1]==0)
+	{
+		sum[0]=1+value[banker0[0]];
+		sum[1]=10+value[banker0[0]];
+		sum_b=sum[2]=11+value[banker0[0]];
+	}
+	else sum_b=sum[0]=sum[1]=sum[2]=value[banker0[0]]+value[banker0[1]];
+	return(sum_b);
+}
+int sum23(int banker0[],int b[],int sum_b)
+{
+	int value[13]={1,2,3,4,5,6,7,8,9,10,10,10,10};
+	int sum[3]={0};
+	if(banker0[b[0]-1]==0)
+	{
+		
+		if(1+sum_b<=21) sum[0]=1+sum_b;
+		if(10+sum_b<=21) sum[1]=10+sum_b;
+		if(11+sum_b<=21) sum[2]=11+sum_b;
+		if(sum[0]>=sum[1])
+			sum_b=sum[0];
+		else sum_b=sum[1];
+		if(sum_b>=sum[2]);
+		else sum_b=sum[2];	 
+	}
+	else sum_b=sum_b+value[banker0[b[0]-1]];
+	return(sum_b);
+}
+
+
+void pA(int p[],int player1[])//A=1,10,11
+{
+	int i,j;
+	for(i=0;i<p[0];i++)
+	{
+		if(player1[i]==0)
+		{
+			printf("  第%d张的A算多少点:",i+1);
+			scanf("%d",&j);
+			if(j==11) player1[i]=13;
+			else if(j==10) player1[i]=10;
+		}
+	}
+}	
+void compare(int sum_p,int sum_b,int win_p[],int win_b[])
+{
+	
+	if(sum_p>21)
+	{
+		if(sum_b>21) printf("\t       Draw\n");
+		else printf("\t  computer:WIN\twin_b=%d\n",++win_b[0]);
+	}
+	else
+	{
+		if(sum_b>21) printf("\t  you:WIN\twin_p=%d\n",++win_p[0]);
+		else if(sum_p>sum_b) printf("\t  you:WIN\twin_p=%d\n",++win_p[0]);
+		else if(sum_p==sum_b) printf("\t       Draw\n"); 
+		else printf("\t  computer:WIN\twin_b=%d\n",++win_b[0]);
+	}
+}
+
+
+int BJ_p(int player1[],int win_p[],int banker0[])
+{
+	if(player1[0]==0)
+	{
+		if(player1[1]==0||player1[1]>=10) 
+			{
+				void over(int banker0[]);
+				over(banker0);
+				printf("\n");
+				printf("        you BlackJack\n");
+				printf("          win_p=%d\n",++win_p[0]);
+				system("pause"); 
+				return 1;
+			}
+	}
+	else if(player1[1]==0)
+	{
+		if(player1[0]==0||player1[0]>=10) 
+			{
+				void over(int banker0[]);
+				over(banker0);
+				printf("\n");
+				printf("        you BlackJack\n");
+				printf("          win_p=%d\n",++win_p[0]);
+				system("pause"); 
+				return 1;
+			}
+	}
+	return 0;
+}
+int BJ_b(int banker0[],int win_b[])
+{
+	if(banker0[0]==0)
+	{
+		if(banker0[1]==0||banker0[1]>=10) 
+			{
+				void over(int banker0[]);
+				over(banker0);
+				printf("\n");
+				printf("        Computer BlackJack\n");
+				printf("            win_b=%d\n",++win_b[0]);
+				system("pause");
+				return 1;
+			}
+	}
+	else if(banker0[1]==0)
+	{
+		if(banker0[0]==0||banker0[0]>=10) 
+			{
+				void over(int banker0[]);
+				over(banker0);
+				printf("\n");
+				printf("        Computer BlackJack\n");
+				printf("            win_b=%d\n",++win_b[0]);
+				system("pause");
+				return 1;
+			}
+	}
+	return 0;
+}
+
+
