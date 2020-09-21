@@ -1,0 +1,37 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Aug 25 10:39:00 2019
+
+@author: windows
+"""
+
+#载入并去掉停用词(没意义的词)
+from nltk.corpus import stopwords
+import nltk
+nltk.download('stopwords')
+stopwords = stopwords.words('english')
+#...if words not in stopwords...
+
+#布朗语料库中的一个经典的例子来了解 NLTK 和条件频率分布的功能
+from nltk.corpus import brown
+nltk.download('brown')
+#获得新闻文体中所有的词可用 words()函数
+brown.words(categories = 'news')
+brown.words(fileids = 'ca16')
+
+# =============================================================================
+# 情态动词在文本很常用,以下程序用来比较情态动词 can、could、may、might、must、will、would 
+# 在新闻(news)和浪漫(romance)这两种不同文体中的频率，依据不同的“条件”即文体计算每个类别的频率分布
+# tabulate()方法用来为条件概率分布绘制分布表，
+# 其conditions参数指定要显示的条件,这里是文体，默认为所有条件,
+# samples参数指定要显示的样本,这里是情态动词。
+# =============================================================================
+import nltk
+from nltk.corpus import brown
+cfd = nltk.ConditionalFreqDist((genre,word) 
+            for genre in brown.categories() 
+            for word in brown.words(categories = genre))
+genres = ['news', 'romance']
+modals = ['can','could','may','might','must','will','would']
+cfd.tabulate(conditions = genres, samples = modals)
+cfd.plot(conditions = genres, samples = modals)
